@@ -54,6 +54,7 @@ namespace Weather
                 InputIcon();
                 firstValueSlider();
                 ButtonVisibility();
+                ContenButtons(time);
             }
             catch (Exception)
             {
@@ -71,6 +72,14 @@ namespace Weather
                     slider.Value = e.OldValue;
                 }  
             }
+            
+        }
+        private void ContenButtons(DateTime time)
+        {
+            buttonFirst.Content = DayToStringMidday(time);
+            buttonSecond.Content = DayToStringMidday(time.AddDays(1));
+            buttonThird.Content = DayToStringMidday(time.AddDays(2));
+            buttonFour.Content = DayToStringMidday(time.AddDays(3));
             
         }
         private bool OnFirstWeather { get; set; } = false;
@@ -185,9 +194,17 @@ namespace Weather
             public int all { get; set; }
         }
 
-        private void aaa(object sender, RoutedEventArgs e)
+        private void ClickButtons(object sender, RoutedEventArgs e)
         {
             OnFirstWeather = false;
+            MessageBox.Show("AAA");
+        }
+
+        private void buttonFirstClick(object sender, RoutedEventArgs e)
+        {
+            OnFirstWeather = true;
+            firstValueSlider();
+            MessageBox.Show(Name);
         }
 
         public class Wind

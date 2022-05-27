@@ -205,35 +205,31 @@
         <Button 
             x:Name="buttonFirst"
             Grid.Row="1"
-            Click="aaa" 
+            Click="buttonFirstClick" 
             Opacity="0" 
             Panel.ZIndex="2"
-            Background="#FFF3F509" 
             Visibility="Hidden"
         /><Button 
             x:Name="buttonSecond"
             Grid.Row="2"
-            Click="aaa" 
+            Click="ClickButtons" 
             Opacity="0" 
             Panel.ZIndex="2"
-            Background="#FFF3F509"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonThird"
             Grid.Row="3"
-            Click="aaa" 
+            Click="ClickButtons" 
             Opacity="0" 
             Panel.ZIndex="2"
-            Background="#FFF3F509" 
             Visibility="Hidden"
         /><Button 
             x:Name="buttonFour"
             Grid.Row="4"
-            Click="aaa" 
+            Click="ClickButtons" 
             Opacity="0" 
             Panel.ZIndex="2"
-            Background="#FFF3F509"
-            Visibility="Hidden"
+            Visibility="Visible"
         />
 
     </Grid>
