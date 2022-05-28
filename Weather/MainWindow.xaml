@@ -32,8 +32,9 @@
                  MaxLines="1"
                  BorderBrush="Gray"
                  BorderThickness="0,0,0,3"
-                 Text="Miejscowość"
-                 AcceptsTab="True" KeyDown="TextBox_KeyDown"
+                 Text="Kraków"
+                 AcceptsTab="True" 
+                 KeyDown="TextBox_KeyDown"
                  
                  >
         </TextBox>
@@ -118,34 +119,75 @@
             Grid.Row="2"
             Grid.RowSpan="2"
             Grid.Column="1"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="1"
             Margin="10,0,0,0"
+            HorizontalAlignment="Right"
             >
             <Label 
-                x:Name="temperatura"
+                x:Name="temp"
+                FontSize="18"
+                Content="Temperatura:"
+                HorizontalAlignment="Right"/>
+            <Label
+                x:Name="pressure"
+                FontSize="18"
+                Content="Ciśnienie:"
+                HorizontalAlignment="Right"
+             />
+            <Label
+                x:Name="clouds"
+                FontSize="18"
+                Content="Zachmurzenie:"
+                HorizontalAlignment="Right"
+             />
+            <Label
+                x:Name="humidity"
+                FontSize="18"
+                Content="Wilgotność:"
+                HorizontalAlignment="Right"
+             />
+            <Label
+                x:Name="wind"
+                FontSize="18"
+                Content="Wiatr:"
+                HorizontalAlignment="Right"
+             />
+
+
+        </StackPanel>
+        <StackPanel 
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Grid.ColumnSpan="1"
+
+            HorizontalAlignment="Left"
+            >
+            <Label 
+                x:Name="tempValue"
                 FontSize="18"
                 Content="Temperatura:"
                 HorizontalAlignment="Left"/>
             <Label
-                x:Name="cisnienie"
+                x:Name="pressureValue"
                 FontSize="18"
                 Content="Ciśnienie:"
                 HorizontalAlignment="Left"
              />
             <Label
-                x:Name="opady"
+                x:Name="cloudsValue"
                 FontSize="18"
                 Content="Szansa opadów:"
                 HorizontalAlignment="Left"
              />
             <Label
-                x:Name="wilgotnosc"
+                x:Name="humidityValue"
                 FontSize="18"
                 Content="Wilgotność:"
                 HorizontalAlignment="Left"
              />
             <Label
-                x:Name="wiatr"
+                x:Name="windValue"
                 FontSize="18"
                 Content="Wiatr:"
                 HorizontalAlignment="Left"
@@ -212,21 +254,21 @@
         /><Button 
             x:Name="buttonSecond"
             Grid.Row="2"
-            Click="ClickButtons" 
+            Click="ClickButtonSecond" 
             Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonThird"
             Grid.Row="3"
-            Click="ClickButtons" 
+            Click="ClickButtonThird" 
             Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonFour"
             Grid.Row="4"
-            Click="ClickButtons" 
+            Click="ClickButtonFour" 
             Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Visible"

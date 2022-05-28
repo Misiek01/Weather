@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.Win32;
+using System.Globalization;
 
 namespace Weather
 {
@@ -28,10 +29,8 @@ namespace Weather
         public string firstTimeApp;
         public DateTime timeApp;
         
+        
         Dictionary<string, List> Weathers = new Dictionary<string, List>();
-        private void InputData()
-        {
-        }
         private void DownloadData(string city)
         {
             if(Weathers.Count>0)
@@ -41,6 +40,7 @@ namespace Weather
             client.Headers.Add("Content-Type", "application/json");
             try
             {
+                CultureInfo culture = CultureInfo.CreateSpecificCulture("PL-pl");
                 string json = client.DownloadString($"https://api.openweathermap.org/data/2.5/forecast?q={city}&?format=json&appid=ec8a2f661ea7e9b22ad91606f3197452");
                 WeatherTable table = JsonSerializer.Deserialize<WeatherTable>(json);
                 msc.Content = table.city.name;
@@ -49,12 +49,15 @@ namespace Weather
                     Weathers.Add(item.dt_txt, item);
                 } 
                 DateTime time = ConvertToDateTime(table.list[0].dt);
+                //timeApp= ConvertToDateTime(table.list[0].dt);
                 firstTimeApp = table.list[0].dt_txt;
                 InputDay(time);
                 InputIcon();
                 firstValueSlider();
                 ButtonVisibility();
                 ContenButtons(time);
+                ButtonEnabled();
+                InputData(buttonFirst.Content.ToString());
             }
             catch (Exception)
             {
@@ -65,29 +68,46 @@ namespace Weather
         {
             if (firstTimeApp is null)
                 return;
-            if (OnFirstWeather)
+            if (!buttonFirst.IsEnabled)
             {
-                if (e.NewValue<timeApp.Hour)
-                {
+                if (e.NewValue < timeApp.Hour)
                     slider.Value = e.OldValue;
-                }  
+                else
+                    slider.Value = e.NewValue;
+                NewValueSlider(e,buttonFirst); 
             }
-            
+            if (!buttonSecond.IsEnabled)
+            {
+                NewValueSlider(e,buttonSecond); 
+            }
         }
+
+        private void NewValueSlider(RoutedPropertyChangedEventArgs<double> e,Button button)
+        {
+            DateTime time = DateTime.Parse(button.Content.ToString());
+            if (e.NewValue > e.OldValue)
+                time = time.AddHours(3);
+            else
+                time = time.AddHours(-3);
+            string timeStr= DayToString(time);
+            button.Content = timeStr;
+            InputData(timeStr);
+        }
+
         private void ContenButtons(DateTime time)
         {
             buttonFirst.Content = DayToStringMidday(time);
             buttonSecond.Content = DayToStringMidday(time.AddDays(1));
             buttonThird.Content = DayToStringMidday(time.AddDays(2));
             buttonFour.Content = DayToStringMidday(time.AddDays(3));
-            
         }
-        private bool OnFirstWeather { get; set; } = false;
         private void firstValueSlider()
         {
             timeApp = DateTime.Parse(Weathers[firstTimeApp].dt_txt);
             slider.Value= timeApp.Hour;
-            OnFirstWeather = true;
+            buttonSecond.IsEnabled = false;
+            buttonThird.IsEnabled = false;
+            buttonFour.IsEnabled = false;
 
         }
         public MainWindow()
@@ -142,6 +162,10 @@ namespace Weather
         {
             return time.ToString("yyyy-MM-dd 12:00:00");
         }
+        public string DayToString(DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd HH:00:00");
+        }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -179,7 +203,7 @@ namespace Weather
         }
         public class Main
         {
-            public decimal temp { get; set; }
+            public double temp { get; set; }
             public int humidity { get; set; }
             public int pressure { get; set; }
 
@@ -193,18 +217,59 @@ namespace Weather
         {
             public int all { get; set; }
         }
-
-        private void ClickButtons(object sender, RoutedEventArgs e)
+        private void ButtonEnabled()
         {
-            OnFirstWeather = false;
-            MessageBox.Show("AAA");
+            buttonFirst.IsEnabled = true; 
+            buttonSecond.IsEnabled = true;
+            buttonThird.IsEnabled = true;
+            buttonFour.IsEnabled = true;
         }
-
+        private void ClickButtonSecond(object sender, RoutedEventArgs e)
+        {
+            ContenButtons(timeApp);
+            slider.Value = 12;
+            ButtonEnabled();
+            buttonSecond.IsEnabled = false;
+            InputData(buttonSecond.Content.ToString());   
+        }
+        private void ClickButtonThird(object sender, RoutedEventArgs e)
+        {
+            ContenButtons(timeApp);
+            slider.Value = 12;
+            ButtonEnabled();
+            buttonThird.IsEnabled = false;
+            InputData(buttonThird.Content.ToString());
+        }
+        private void ClickButtonFour(object sender, RoutedEventArgs e)
+        {
+            ContenButtons(timeApp);
+            slider.Value = 12;
+            ButtonEnabled();
+            buttonFour.IsEnabled = false;
+            InputData(buttonFour.Content.ToString());
+        }
         private void buttonFirstClick(object sender, RoutedEventArgs e)
         {
-            OnFirstWeather = true;
             firstValueSlider();
-            MessageBox.Show(Name);
+            ContenButtons(timeApp);
+            ButtonEnabled();
+            buttonFirst.IsEnabled = false;
+            InputData(buttonFirst.Content.ToString());
+        }
+        private void InputData(string timeStr)
+        {
+            foreach (var item in Weathers)
+            {
+                if (item.Key==timeStr)
+                {
+                    int temp = (int)(item.Value.main.temp - 273.15);
+                    tempValue.Content = temp + " ";
+                    humidityValue.Content = item.Value.main.humidity;
+                    cloudsValue.Content = item.Value.clouds.all;
+                    pressureValue.Content=item.Value.main.pressure;
+                    //windValue.Content=item.Value
+                }
+            }
         }
 
         public class Wind
