@@ -100,10 +100,11 @@
                 Maximum="24"
                 LargeChange="3"
                 SmallChange="3"
-                Value="12"
                 TickFrequency="3"
                 TickPlacement="BottomRight"
-                IsSnapToTickEnabled="True" ValueChanged="Slider_ValueChanged"
+                IsSnapToTickEnabled="True"
+                Visibility="Hidden"
+                ValueChanged="Slider_ValueChanged"
                 >
         </Slider>
         <Label 
@@ -248,30 +249,30 @@
             x:Name="buttonFirst"
             Grid.Row="1"
             Click="buttonFirstClick" 
-            Opacity="0" 
+            Opacity="1" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonSecond"
             Grid.Row="2"
             Click="ClickButtonSecond" 
-            Opacity="0" 
+            Opacity="1" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonThird"
             Grid.Row="3"
             Click="ClickButtonThird" 
-            Opacity="0" 
+            Opacity="1" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         /><Button 
             x:Name="buttonFour"
             Grid.Row="4"
             Click="ClickButtonFour" 
-            Opacity="0" 
+            Opacity="1" 
             Panel.ZIndex="2"
-            Visibility="Visible"
+            Visibility="Hidden"
         />
 
     </Grid>

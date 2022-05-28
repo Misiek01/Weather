@@ -26,8 +26,8 @@ namespace Weather
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string firstTimeApp;
-        public DateTime timeApp;
+        private string firstTimeApp;
+        private DateTime timeApp;
         
         
         Dictionary<string, List> Weathers = new Dictionary<string, List>();
@@ -51,12 +51,14 @@ namespace Weather
                 DateTime time = ConvertToDateTime(table.list[0].dt);
                 //timeApp= ConvertToDateTime(table.list[0].dt);
                 firstTimeApp = table.list[0].dt_txt;
+                slider.Visibility = Visibility.Visible;
                 InputDay(time);
                 InputIcon();
                 firstValueSlider();
                 ButtonVisibility();
                 ContenButtons(time);
                 ButtonEnabled();
+                buttonFirst.IsEnabled = false;
                 InputData(buttonFirst.Content.ToString());
             }
             catch (Exception)
@@ -66,6 +68,8 @@ namespace Weather
         }
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (Click)
+                return;
             if (firstTimeApp is null)
                 return;
             if (!buttonFirst.IsEnabled)
@@ -76,9 +80,17 @@ namespace Weather
                     slider.Value = e.NewValue;
                 NewValueSlider(e,buttonFirst); 
             }
-            if (!buttonSecond.IsEnabled)
+            else if (!buttonSecond.IsEnabled)
             {
                 NewValueSlider(e,buttonSecond); 
+            }
+            else if(!buttonThird.IsEnabled)
+            {
+                NewValueSlider(e,buttonThird); 
+            }
+            else if(!buttonFour.IsEnabled)
+            {
+                NewValueSlider(e,buttonFour); 
             }
         }
 
@@ -87,7 +99,7 @@ namespace Weather
             DateTime time = DateTime.Parse(button.Content.ToString());
             if (e.NewValue > e.OldValue)
                 time = time.AddHours(3);
-            else
+            else if (e.NewValue < e.OldValue)
                 time = time.AddHours(-3);
             string timeStr= DayToString(time);
             button.Content = timeStr;
@@ -96,7 +108,7 @@ namespace Weather
 
         private void ContenButtons(DateTime time)
         {
-            buttonFirst.Content = DayToStringMidday(time);
+            buttonFirst.Content = DayToString(time);
             buttonSecond.Content = DayToStringMidday(time.AddDays(1));
             buttonThird.Content = DayToStringMidday(time.AddDays(2));
             buttonFour.Content = DayToStringMidday(time.AddDays(3));
@@ -179,8 +191,7 @@ namespace Weather
         public static DateTime ConvertToDateTime(double unixTimeStamp)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            dtDateTime = dtDateTime.AddHours(-1);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);
             return dtDateTime;
         }
         public record WeatherTable
@@ -218,34 +229,42 @@ namespace Weather
             public int all { get; set; }
         }
         private void ButtonEnabled()
-        {
+                {
             buttonFirst.IsEnabled = true; 
             buttonSecond.IsEnabled = true;
             buttonThird.IsEnabled = true;
             buttonFour.IsEnabled = true;
-        }
+            }
+        private bool Click=false;
         private void ClickButtonSecond(object sender, RoutedEventArgs e)
         {
-            ContenButtons(timeApp);
+            Click = true;
             slider.Value = 12;
+            Click = false;
+            ContenButtons(timeApp);
             ButtonEnabled();
             buttonSecond.IsEnabled = false;
             InputData(buttonSecond.Content.ToString());   
         }
         private void ClickButtonThird(object sender, RoutedEventArgs e)
         {
-            ContenButtons(timeApp);
+            Click = true;
             slider.Value = 12;
+            Click = false;
+            ContenButtons(timeApp);
             ButtonEnabled();
             buttonThird.IsEnabled = false;
             InputData(buttonThird.Content.ToString());
         }
         private void ClickButtonFour(object sender, RoutedEventArgs e)
         {
-            ContenButtons(timeApp);
+            Click = true;
             slider.Value = 12;
+            Click = false;
+            ContenButtons(timeApp);
             ButtonEnabled();
             buttonFour.IsEnabled = false;
+            
             InputData(buttonFour.Content.ToString());
         }
         private void buttonFirstClick(object sender, RoutedEventArgs e)
