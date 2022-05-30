@@ -41,9 +41,10 @@ namespace Weather
             try
             {
                 CultureInfo culture = CultureInfo.CreateSpecificCulture("PL-pl");
-                string json = client.DownloadString($"https://api.openweathermap.org/data/2.5/forecast?q={city}&?format=json&appid=ec8a2f661ea7e9b22ad91606f3197452");
+                string json = client.DownloadString($"https://api.openweathermap.org/data/2.5/forecast?q={city}&?format=json&appid=ec8a2f661ea7e9b22ad91606f3197452&lang=pl");
                 WeatherTable table = JsonSerializer.Deserialize<WeatherTable>(json);
                 msc.Content = table.city.name;
+                underMsc.Content = table.list[0].weather[0].description;
                 foreach (var item in table.list)
                 {
                     Weathers.Add(item.dt_txt, item);
@@ -60,11 +61,22 @@ namespace Weather
                 ButtonEnabled();
                 buttonFirst.IsEnabled = false;
                 InputData(buttonFirst.Content.ToString());
+                LoadingContent();
+
+
             }
             catch (Exception)
             {
                 MessageBox.Show("Błędna miejscowość");
             }
+        }
+        private void LoadingContent()
+        {
+            sTwo.Visibility = Visibility.Visible;
+            sOne.Visibility = Visibility.Visible;
+            lOne.Visibility = Visibility.Visible;
+            lTwo.Visibility= Visibility.Visible;
+            lThree.Visibility= Visibility.Visible;
         }
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -146,13 +158,8 @@ namespace Weather
         }
         public void InputIcon()
         {  
-            string icon =Weathers[firstTimeApp].weather[0].icon;
-            Image imgfirst = new Image();
-            BitmapImage bi3 = new BitmapImage();
-            bi3.BeginInit();
-            bi3.UriSource = new Uri($"http://openweathermap.org/img/wn/{icon}@2x.png", UriKind.RelativeOrAbsolute);
-            bi3.EndInit();
-            firstImg.Source = bi3;
+            AddImg(firstImg,0);
+            AddImg(imgMsc,0);
             AddImg(secondImg,1);
             AddImg(thirdImg,2);
             AddImg(fourImg,3);
@@ -161,8 +168,20 @@ namespace Weather
         {
             DateTime time = DateTime.Parse(Weathers[firstTimeApp].dt_txt);
             time = time.AddDays(i);
-            string timeStr = DayToStringMidday(time);
+            string timeStr;
+            if (i==0)
+                timeStr = DayToString(time);
+            else
+                timeStr = DayToStringMidday(time);
             string icon = Weathers[timeStr].weather[0].icon;
+            Image imgfirst = new Image();
+            BitmapImage bi3 = new BitmapImage();
+            bi3.BeginInit();
+            bi3.UriSource = new Uri($"http://openweathermap.org/img/wn/{icon}@2x.png", UriKind.RelativeOrAbsolute);
+            bi3.EndInit();
+            image.Source = bi3;
+        }public void AddImg(Image image,string icon)
+        {
             Image imgfirst = new Image();
             BitmapImage bi3 = new BitmapImage();
             bi3.BeginInit();
@@ -210,7 +229,13 @@ namespace Weather
             public Main main { get; set; }
             public List<Weather> weather { get; set; }
             public Clouds clouds { get; set; }
+            public Wind wind { get; set; }
             public string dt_txt { get; set; }
+            public double pop { get; set; }
+        }
+        public class Wind
+        {
+            public double speed { get; set; }
         }
         public class Main
         {
@@ -222,6 +247,7 @@ namespace Weather
         public class Weather
         {
             public string icon { get; set; }
+            public string description { get; set; }
         }
 
         public class Clouds
@@ -244,7 +270,7 @@ namespace Weather
             ContenButtons(timeApp);
             ButtonEnabled();
             buttonSecond.IsEnabled = false;
-            InputData(buttonSecond.Content.ToString());   
+            InputData(buttonSecond.Content.ToString());
         }
         private void ClickButtonThird(object sender, RoutedEventArgs e)
         {
@@ -264,7 +290,6 @@ namespace Weather
             ContenButtons(timeApp);
             ButtonEnabled();
             buttonFour.IsEnabled = false;
-            
             InputData(buttonFour.Content.ToString());
         }
         private void buttonFirstClick(object sender, RoutedEventArgs e)
@@ -275,6 +300,9 @@ namespace Weather
             buttonFirst.IsEnabled = false;
             InputData(buttonFirst.Content.ToString());
         }
+
+       
+
         private void InputData(string timeStr)
         {
             foreach (var item in Weathers)
@@ -282,22 +310,18 @@ namespace Weather
                 if (item.Key==timeStr)
                 {
                     int temp = (int)(item.Value.main.temp - 273.15);
-                    tempValue.Content = temp + " ";
-                    humidityValue.Content = item.Value.main.humidity;
-                    cloudsValue.Content = item.Value.clouds.all;
-                    pressureValue.Content=item.Value.main.pressure;
-                    //windValue.Content=item.Value
+                    tempValue.Content = temp + " °C";
+                    humidityValue.Content = item.Value.main.humidity + "%";
+                    cloudsValue.Content = item.Value.clouds.all+"%";
+                    pressureValue.Content=item.Value.main.pressure + " hPa";
+                    rainValue.Content = (int)(item.Value.pop*100)+"%";
+                    windValue.Content = (int)(item.Value.wind.speed*3.6) + " km/h";
+                    string icon = item.Value.weather[0].icon;
+                    underMsc.Content = item.Value.weather[0].description;
+                    AddImg(imgMsc, icon);
                 }
             }
         }
-
-        public class Wind
-        {
-            public double spped { get; set; }
-            public int deg { get; set; }
-
-        }
-        
 
     }
 }

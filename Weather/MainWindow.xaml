@@ -5,8 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Weather"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="1000" MinHeight="650" MinWidth="1000">
-    <Grid>
+        Title="MainWindow" Height="650" Width="1000" MinHeight="650" MinWidth="1000"  >
+    <Window.Resources>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <Style x:Key="PoleStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" CornerRadius="60" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid >
+        <Grid.Background>
+            <ImageBrush ImageSource="/background2.jpg"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition  />
             <ColumnDefinition />
@@ -22,7 +71,7 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBox
+        <TextBox Style="{DynamicResource PoleStyle}"
                 x:Name="pole"
                 Grid.Column="1"
                  Grid.ColumnSpan="4"
@@ -30,19 +79,19 @@
                  Margin="100,20,100,20"
                  TextAlignment="Center"
                  MaxLines="1"
-                 BorderBrush="Gray"
-                 BorderThickness="0,0,0,3"
-                 Text="Kraków"
-                 AcceptsTab="True" 
-                 KeyDown="TextBox_KeyDown"
-                 
-                 >
-        </TextBox>
+                 BorderThickness="2,2,2,2"
+                 Text="Miejscowość"
+                 AcceptsTab="False" 
+                 KeyDown="TextBox_KeyDown" 
+                 Background="Black"
+                 Opacity="0.30" 
+                 Foreground="white" 
+                 />
 
         <TextBox
+            Foreground="White"
             x:Name="first"
             Grid.Row="1"
-            Text=""
             FontSize="18"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
@@ -50,12 +99,13 @@
             TextAlignment="Center" 
             IsReadOnly="True"
             BorderThickness="0,0,0,0" 
-            Margin="0,0,0,10" Panel.ZIndex="-2"
+            Margin="0,0,0,10" 
+            Background="{x:Null}"
             />
         <TextBox
+            Foreground="White"
             x:Name="second"
             Grid.Row="2"
-            Text=""
             FontSize="18"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
@@ -63,25 +113,14 @@
             TextAlignment="Center"
             IsReadOnly="True"
             BorderThickness="0,0,0,0"
-            Margin="0,0,0,10"
+            Margin="0,0,0,10" 
+            Background="{x:Null}"
             />
         <TextBox
+            Foreground="White"
             x:Name="third"
             Grid.Row="3"
-            Text=""
-            FontSize="18"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            TextWrapping="WrapWithOverflow"
-            TextAlignment="Center"
-            IsReadOnly="True"
-            BorderThickness="0,0,0,0"
-            Margin="0,0,0,10"/>
-        <TextBox 
-            x:Name="four"
-            Grid.Row="4"
-            Text=""
-            FontSize="18"
+            FontSize="18" 
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
             TextWrapping="WrapWithOverflow"
@@ -89,6 +128,20 @@
             IsReadOnly="True"
             BorderThickness="0,0,0,0"
             Margin="0,0,0,10"
+            Background="{x:Null}"/>
+        <TextBox 
+            Foreground="White"
+            x:Name="four"
+            Grid.Row="4"
+            FontSize="18"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            TextWrapping="WrapWithOverflow"
+            TextAlignment="Center"
+            IsReadOnly="True"
+            BorderThickness="0,0,0,0"
+            Margin="0,0,0,10" 
+            Background="{x:Null}"
             />
 
         <Slider 
@@ -107,47 +160,92 @@
                 ValueChanged="Slider_ValueChanged"
                 >
         </Slider>
-        <Label 
-            x:Name="msc"
-            Content=""
-            FontSize="32"
-            VerticalAlignment="Top"
-            HorizontalAlignment="Center"
+        <StackPanel
+            
             Grid.Column="2"
             Grid.ColumnSpan="2"
-            Grid.Row="1"/>
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Orientation="Vertical">
+            <StackPanel
+                 Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label 
+                    Foreground="White"
+                    x:Name="msc"
+                    FontSize="32"
+                    VerticalAlignment="Center"
+                    />
+                <Image 
+                    x:Name="imgMsc"
+                    Width="60"
+                    Height="60"
+                    />
+            </StackPanel>
+
+            <Label 
+                
+            Foreground="White"
+            x:Name="underMsc"
+            FontSize="16" 
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center" Margin="0,0,0,0"
+                />
+        </StackPanel>
         <StackPanel 
+            
+            x:Name="sOne"
             Grid.Row="2"
             Grid.RowSpan="2"
             Grid.Column="1"
             Grid.ColumnSpan="1"
             Margin="10,0,0,0"
             HorizontalAlignment="Right"
+            Visibility="Hidden"
             >
             <Label 
+                
+            Foreground="White"
                 x:Name="temp"
                 FontSize="18"
                 Content="Temperatura:"
                 HorizontalAlignment="Right"/>
             <Label
+                
+            Foreground="White"
                 x:Name="pressure"
                 FontSize="18"
                 Content="Ciśnienie:"
                 HorizontalAlignment="Right"
              />
             <Label
+                
+            Foreground="White"
                 x:Name="clouds"
                 FontSize="18"
                 Content="Zachmurzenie:"
                 HorizontalAlignment="Right"
              />
+
             <Label
+                
+            Foreground="White"
+                x:Name="rain"
+                FontSize="18"
+                Content="Szansa opadów:"
+                HorizontalAlignment="Right"
+             />
+            <Label
+                
+            Foreground="White"
                 x:Name="humidity"
                 FontSize="18"
                 Content="Wilgotność:"
                 HorizontalAlignment="Right"
              />
             <Label
+                
+            Foreground="White"
                 x:Name="wind"
                 FontSize="18"
                 Content="Wiatr:"
@@ -157,65 +255,85 @@
 
         </StackPanel>
         <StackPanel 
+            x:Name="sTwo"
             Grid.Row="2"
             Grid.RowSpan="2"
             Grid.Column="2"
             Grid.ColumnSpan="1"
-
+            Visibility="Hidden"
             HorizontalAlignment="Left"
             >
             <Label 
+                
+            Foreground="White"
                 x:Name="tempValue"
                 FontSize="18"
-                Content="Temperatura:"
                 HorizontalAlignment="Left"/>
             <Label
+                
+            Foreground="White"
                 x:Name="pressureValue"
                 FontSize="18"
-                Content="Ciśnienie:"
                 HorizontalAlignment="Left"
              />
             <Label
+                
+            Foreground="White"
                 x:Name="cloudsValue"
                 FontSize="18"
-                Content="Szansa opadów:"
                 HorizontalAlignment="Left"
              />
             <Label
+                 
+            Foreground="White"
+                x:Name="rainValue"
+                FontSize="18"
+                HorizontalAlignment="Left"
+             />
+            <Label
+            Foreground="White"
                 x:Name="humidityValue"
                 FontSize="18"
-                Content="Wilgotność:"
                 HorizontalAlignment="Left"
              />
             <Label
+            Foreground="White"
                 x:Name="windValue"
                 FontSize="18"
-                Content="Wiatr:"
                 HorizontalAlignment="Left"
              />
+
 
 
         </StackPanel>
         <Label
+            Foreground="White"
+            x:Name="lOne"
             Grid.Column="1"
             Grid.Row="4"
             Content="0:00"
+            Visibility="Hidden"
             Margin="33,30,40,20"
             />
         <Label
+            Foreground="White"
+             x:Name="lTwo"
             Grid.Column="2"
             Grid.ColumnSpan="2"
             Grid.Row="4"
             Content="12:00" HorizontalAlignment="Center"
             Margin="0,30,0,20"
-            
+            Visibility="Hidden"
             />
         <Label
+            Foreground="White"
+             x:Name="lThree"
             Grid.Column="4"
             Grid.Row="4"
             Content="24:00"
             Margin="40,30,26,20"
             HorizontalAlignment="Right"
+            Visibility="Hidden"
             />
 
         <Image 
@@ -249,28 +367,31 @@
             x:Name="buttonFirst"
             Grid.Row="1"
             Click="buttonFirstClick" 
-            Opacity="1" 
+            Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
-        /><Button 
+        />
+        <Button 
             x:Name="buttonSecond"
             Grid.Row="2"
             Click="ClickButtonSecond" 
-            Opacity="1" 
+            Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
-        /><Button 
+        />
+        <Button 
             x:Name="buttonThird"
             Grid.Row="3"
             Click="ClickButtonThird" 
-            Opacity="1" 
+            Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
-        /><Button 
+        />
+        <Button 
             x:Name="buttonFour"
             Grid.Row="4"
             Click="ClickButtonFour" 
-            Opacity="1" 
+            Opacity="0" 
             Panel.ZIndex="2"
             Visibility="Hidden"
         />
