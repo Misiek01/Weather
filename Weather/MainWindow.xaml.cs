@@ -301,7 +301,11 @@ namespace Weather
             InputData(buttonFirst.Content.ToString());
         }
 
-       
+        private void pole_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (pole.Text.Equals("Miejscowość"))
+                pole.Text = "";
+        }
 
         private void InputData(string timeStr)
         {
@@ -317,6 +321,8 @@ namespace Weather
                     rainValue.Content = (int)(item.Value.pop*100)+"%";
                     windValue.Content = (int)(item.Value.wind.speed*3.6) + " km/h";
                     string icon = item.Value.weather[0].icon;
+                    string[] data=item.Value.dt_txt.Split(" ");
+                    hours.Content =data[1];
                     underMsc.Content = item.Value.weather[0].description;
                     AddImg(imgMsc, icon);
                 }
