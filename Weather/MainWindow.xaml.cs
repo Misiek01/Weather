@@ -18,6 +18,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.Win32;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Weather
 {
@@ -28,12 +29,12 @@ namespace Weather
     {
         private string firstTimeApp;
         private DateTime timeApp;
-        
-        
+        List<Cities> lista;
+
         Dictionary<string, List> Weathers = new Dictionary<string, List>();
         private void DownloadData(string city)
         {
-            if(Weathers.Count>0)
+            if (Weathers.Count > 0)
                 Weathers.Clear();
             pole.Text = "";
             WebClient client = new WebClient();
@@ -48,7 +49,7 @@ namespace Weather
                 foreach (var item in table.list)
                 {
                     Weathers.Add(item.dt_txt, item);
-                } 
+                }
                 DateTime time = ConvertToDateTime(table.list[0].dt);
                 //timeApp= ConvertToDateTime(table.list[0].dt);
                 firstTimeApp = table.list[0].dt_txt;
@@ -62,21 +63,62 @@ namespace Weather
                 buttonFirst.IsEnabled = false;
                 InputData(buttonFirst.Content.ToString());
                 LoadingContent();
-
-
+                DbUpdate(table.city.name);
+                TextBoxDB();
             }
             catch (Exception)
             {
                 MessageBox.Show("Błędna miejscowość");
             }
         }
+        private void TextBoxDB()
+        {
+            AppContext context = new AppContext();
+            Cities city = context.Cities.Find(1);
+            DbOne.Text = city.Name;
+            city = context.Cities.Find(2);
+            DbTwo.Text = city.Name;
+            city = context.Cities.Find(3);
+            DbThree.Text = city.Name;
+            city = context.Cities.Find(4);
+            DbFour.Text = city.Name;
+        }
+        private void DbUpdate(string name)
+        {
+            AppContext context = new AppContext();
+            Cities city = context.Cities.Find(1);
+            Cities cityTwo = context.Cities.Find(2);
+            Cities cityThree = context.Cities.Find(3);
+            Cities cityFour = context.Cities.Find(4);
+            if (city.Name == name
+                || cityTwo.Name == name
+                || cityThree.Name == name
+                || cityFour.Name == name)
+            {
+                return;
+            }
+
+            cityFour.Name = cityThree.Name;
+            context.Update(cityFour);
+
+            cityThree.Name = cityTwo.Name;
+            context.Update(cityThree);
+
+            cityTwo.Name = city.Name;
+            context.Update(cityTwo);
+
+            city.Name = name;
+            context.Update(city);
+            context.SaveChanges();
+
+        }
         private void LoadingContent()
         {
             sTwo.Visibility = Visibility.Visible;
             sOne.Visibility = Visibility.Visible;
             lOne.Visibility = Visibility.Visible;
-            lTwo.Visibility= Visibility.Visible;
-            lThree.Visibility= Visibility.Visible;
+            lTwo.Visibility = Visibility.Visible;
+            lThree.Visibility = Visibility.Visible;
         }
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -90,30 +132,30 @@ namespace Weather
                     slider.Value = e.OldValue;
                 else
                     slider.Value = e.NewValue;
-                NewValueSlider(e,buttonFirst); 
+                NewValueSlider(e, buttonFirst);
             }
             else if (!buttonSecond.IsEnabled)
             {
-                NewValueSlider(e,buttonSecond); 
+                NewValueSlider(e, buttonSecond);
             }
-            else if(!buttonThird.IsEnabled)
+            else if (!buttonThird.IsEnabled)
             {
-                NewValueSlider(e,buttonThird); 
+                NewValueSlider(e, buttonThird);
             }
-            else if(!buttonFour.IsEnabled)
+            else if (!buttonFour.IsEnabled)
             {
-                NewValueSlider(e,buttonFour); 
+                NewValueSlider(e, buttonFour);
             }
         }
 
-        private void NewValueSlider(RoutedPropertyChangedEventArgs<double> e,Button button)
+        private void NewValueSlider(RoutedPropertyChangedEventArgs<double> e, Button button)
         {
             DateTime time = DateTime.Parse(button.Content.ToString());
             if (e.NewValue > e.OldValue)
                 time = time.AddHours(3);
             else if (e.NewValue < e.OldValue)
                 time = time.AddHours(-3);
-            string timeStr= DayToString(time);
+            string timeStr = DayToString(time);
             button.Content = timeStr;
             InputData(timeStr);
         }
@@ -128,7 +170,7 @@ namespace Weather
         private void firstValueSlider()
         {
             timeApp = DateTime.Parse(Weathers[firstTimeApp].dt_txt);
-            slider.Value= timeApp.Hour;
+            slider.Value = timeApp.Hour;
             buttonSecond.IsEnabled = false;
             buttonThird.IsEnabled = false;
             buttonFour.IsEnabled = false;
@@ -137,6 +179,10 @@ namespace Weather
         public MainWindow()
         {
             InitializeComponent();
+            AppContext context = new AppContext();
+            context.Database.EnsureCreated();
+            context.SaveChanges();
+            LoadingDatabase();
         }
         public void InputDay(DateTime time)
         {
@@ -147,7 +193,6 @@ namespace Weather
             third.Text = time.ToLongDateString().ToString();
             time = time.AddDays(1);
             four.Text = time.ToLongDateString().ToString();
-            time=time.AddDays(-3);
         }
         private void ButtonVisibility()
         {
@@ -157,19 +202,19 @@ namespace Weather
             buttonFour.Visibility = Visibility.Visible;
         }
         public void InputIcon()
-        {  
-            AddImg(firstImg,0);
-            AddImg(imgMsc,0);
-            AddImg(secondImg,1);
-            AddImg(thirdImg,2);
-            AddImg(fourImg,3);
+        {
+            AddImg(firstImg, 0);
+            AddImg(imgMsc, 0);
+            AddImg(secondImg, 1);
+            AddImg(thirdImg, 2);
+            AddImg(fourImg, 3);
         }
-        public void AddImg(Image image,int i)
+        public void AddImg(Image image, int i)
         {
             DateTime time = DateTime.Parse(Weathers[firstTimeApp].dt_txt);
             time = time.AddDays(i);
             string timeStr;
-            if (i==0)
+            if (i == 0)
                 timeStr = DayToString(time);
             else
                 timeStr = DayToStringMidday(time);
@@ -180,7 +225,8 @@ namespace Weather
             bi3.UriSource = new Uri($"http://openweathermap.org/img/wn/{icon}@2x.png", UriKind.RelativeOrAbsolute);
             bi3.EndInit();
             image.Source = bi3;
-        }public void AddImg(Image image,string icon)
+        }
+        public void AddImg(Image image, string icon)
         {
             Image imgfirst = new Image();
             BitmapImage bi3 = new BitmapImage();
@@ -213,11 +259,46 @@ namespace Weather
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);
             return dtDateTime;
         }
+        public record Cities
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public int Place { get; set; }
+        }
+        class AppContext : DbContext
+        {
+            public DbSet<Cities> Cities { get; set; }
+            protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            {
+                optionsBuilder.UseSqlite("DATASOURCE=data.db");
+            }
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+            {
+                modelBuilder
+                    .Entity<Cities>()
+                    .ToTable("cities")
+                    .HasData(
+                        new Cities() { Id = 1, Name = "Warszawa", Place = 0 },
+                        new Cities() { Id = 2, Name = "Madryt", Place = 1 },
+                        new Cities() { Id = 3, Name = "Londyn", Place = 2 },
+                        new Cities() { Id = 4, Name = "Kair", Place = 3 }
+                    );
+
+            }
+        }
+        public void LoadingDatabase()
+        {
+            AppContext context = new AppContext();
+            DbOne.Text = context.Cities.Find(1).Name;
+            DbTwo.Text = context.Cities.Find(2).Name;
+            DbThree.Text = context.Cities.Find(3).Name;
+            DbFour.Text = context.Cities.Find(4).Name;
+        }
         public record WeatherTable
         {
             public City city { get; set; }
             public List<List> list { get; set; }
-            
+
         }
         public class City
         {
@@ -255,13 +336,13 @@ namespace Weather
             public int all { get; set; }
         }
         private void ButtonEnabled()
-                {
-            buttonFirst.IsEnabled = true; 
+        {
+            buttonFirst.IsEnabled = true;
             buttonSecond.IsEnabled = true;
             buttonThird.IsEnabled = true;
             buttonFour.IsEnabled = true;
-            }
-        private bool Click=false;
+        }
+        private bool Click = false;
         private void ClickButtonSecond(object sender, RoutedEventArgs e)
         {
             Click = true;
@@ -301,6 +382,30 @@ namespace Weather
             InputData(buttonFirst.Content.ToString());
         }
 
+        private void DbClickFour(object sender, RoutedEventArgs e)
+        {
+            AppContext context = new AppContext();
+            DownloadData(context.Cities.Find(4).Name);
+        }
+
+        private void DbClickTwo(object sender, RoutedEventArgs e)
+        {
+            AppContext context = new AppContext();
+            DownloadData(context.Cities.Find(2).Name);
+        }
+
+        private void DbClickThree(object sender, RoutedEventArgs e)
+        {
+            AppContext context = new AppContext();
+            DownloadData(context.Cities.Find(3).Name);
+        }
+
+        private void DbClickOne(object sender, RoutedEventArgs e)
+        {
+            AppContext context = new AppContext();
+            DownloadData(context.Cities.Find(1).Name);
+        }
+
         private void pole_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (pole.Text.Equals("Miejscowość"))
@@ -311,18 +416,18 @@ namespace Weather
         {
             foreach (var item in Weathers)
             {
-                if (item.Key==timeStr)
+                if (item.Key == timeStr)
                 {
                     int temp = (int)(item.Value.main.temp - 273.15);
                     tempValue.Content = temp + " °C";
                     humidityValue.Content = item.Value.main.humidity + "%";
-                    cloudsValue.Content = item.Value.clouds.all+"%";
-                    pressureValue.Content=item.Value.main.pressure + " hPa";
-                    rainValue.Content = (int)(item.Value.pop*100)+"%";
-                    windValue.Content = (int)(item.Value.wind.speed*3.6) + " km/h";
+                    cloudsValue.Content = item.Value.clouds.all + "%";
+                    pressureValue.Content = item.Value.main.pressure + " hPa";
+                    rainValue.Content = (int)(item.Value.pop * 100) + "%";
+                    windValue.Content = (int)(item.Value.wind.speed * 3.6) + " km/h";
                     string icon = item.Value.weather[0].icon;
-                    string[] data=item.Value.dt_txt.Split(" ");
-                    hours.Content =data[1];
+                    string[] data = item.Value.dt_txt.Split(" ");
+                    hours.Content = data[1];
                     underMsc.Content = item.Value.weather[0].description;
                     AddImg(imgMsc, icon);
                 }
