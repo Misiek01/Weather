@@ -280,8 +280,8 @@ namespace Weather
                     .HasData(
                         new Cities() { Id = 1, Name = "Warszawa", Place = 0 },
                         new Cities() { Id = 2, Name = "Madryt", Place = 1 },
-                        new Cities() { Id = 3, Name = "Londyn", Place = 2 },
-                        new Cities() { Id = 4, Name = "Kair", Place = 3 }
+                        new Cities() { Id = 3, Name = "Berlin", Place = 2 },
+                        new Cities() { Id = 4, Name = "Poznań", Place = 3 }
                     );
 
             }
