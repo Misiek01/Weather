@@ -29,8 +29,6 @@ namespace Weather
     {
         private string firstTimeApp;
         private DateTime timeApp;
-        List<Cities> lista;
-
         Dictionary<string, List> Weathers = new Dictionary<string, List>();
         private void DownloadData(string city)
         {
