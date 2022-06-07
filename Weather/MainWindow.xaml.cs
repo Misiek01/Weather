@@ -27,6 +27,7 @@ namespace Weather
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool Click = false;
         private string firstTimeApp;
         private DateTime timeApp;
         Dictionary<string, List> Weathers = new Dictionary<string, List>();
@@ -49,7 +50,6 @@ namespace Weather
                     Weathers.Add(item.dt_txt, item);
                 }
                 DateTime time = ConvertToDateTime(table.list[0].dt);
-                //timeApp= ConvertToDateTime(table.list[0].dt);
                 firstTimeApp = table.list[0].dt_txt;
                 slider.Visibility = Visibility.Visible;
                 InputDay(time);
@@ -257,33 +257,7 @@ namespace Weather
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);
             return dtDateTime;
         }
-        public record Cities
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public int Place { get; set; }
-        }
-        class AppContext : DbContext
-        {
-            public DbSet<Cities> Cities { get; set; }
-            protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            {
-                optionsBuilder.UseSqlite("DATASOURCE=data.db");
-            }
-            protected override void OnModelCreating(ModelBuilder modelBuilder)
-            {
-                modelBuilder
-                    .Entity<Cities>()
-                    .ToTable("cities")
-                    .HasData(
-                        new Cities() { Id = 1, Name = "Warszawa", Place = 0 },
-                        new Cities() { Id = 2, Name = "Madryt", Place = 1 },
-                        new Cities() { Id = 3, Name = "Berlin", Place = 2 },
-                        new Cities() { Id = 4, Name = "Poznań", Place = 3 }
-                    );
-
-            }
-        }
+        
         public void LoadingDatabase()
         {
             AppContext context = new AppContext();
@@ -292,47 +266,7 @@ namespace Weather
             DbThree.Text = context.Cities.Find(3).Name;
             DbFour.Text = context.Cities.Find(4).Name;
         }
-        public record WeatherTable
-        {
-            public City city { get; set; }
-            public List<List> list { get; set; }
-
-        }
-        public class City
-        {
-            public string name { get; set; }
-        }
-        public class List
-        {
-            public int dt { get; set; }
-            public Main main { get; set; }
-            public List<Weather> weather { get; set; }
-            public Clouds clouds { get; set; }
-            public Wind wind { get; set; }
-            public string dt_txt { get; set; }
-            public double pop { get; set; }
-        }
-        public class Wind
-        {
-            public double speed { get; set; }
-        }
-        public class Main
-        {
-            public double temp { get; set; }
-            public int humidity { get; set; }
-            public int pressure { get; set; }
-
-        }
-        public class Weather
-        {
-            public string icon { get; set; }
-            public string description { get; set; }
-        }
-
-        public class Clouds
-        {
-            public int all { get; set; }
-        }
+        
         private void ButtonEnabled()
         {
             buttonFirst.IsEnabled = true;
@@ -340,7 +274,6 @@ namespace Weather
             buttonThird.IsEnabled = true;
             buttonFour.IsEnabled = true;
         }
-        private bool Click = false;
         private void ClickButtonSecond(object sender, RoutedEventArgs e)
         {
             Click = true;
